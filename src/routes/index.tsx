@@ -3,6 +3,8 @@ import { LoginPage } from '@/modules/auth/presentation/pages/LoginPage';
 import { DashboardLayout } from '@/shared/layouts/DashboardLayout';
 import { AuthGuard } from '@/shared/components/AuthGuard';
 import { PlaceholderPage } from '@/shared/components/PlaceholderPage';
+import { PatientsPage } from '@/modules/patients/presentation/pages/PatientsPage';
+import { MedicalRecordPage } from '@/modules/patients/presentation/pages/MedicalRecordPage';
 import { 
   LayoutDashboard, 
   Users, 
@@ -11,7 +13,8 @@ import {
   Scissors, 
   Package, 
   CreditCard, 
-  Settings 
+  Settings,
+  FileText 
 } from 'lucide-react';
 
 export const router = createBrowserRouter([
@@ -40,11 +43,21 @@ export const router = createBrowserRouter([
     ),
   },
   {
+    path: '/medical-record/:id',
+    element: (
+      <AuthGuard>
+        <DashboardLayout>
+          <MedicalRecordPage />
+        </DashboardLayout>
+      </AuthGuard>
+    ),
+  },
+  {
     path: '/patients',
     element: (
       <AuthGuard>
         <DashboardLayout>
-          <PlaceholderPage title="Gestión de Pacientes" icon={Users} />
+          <PatientsPage />
         </DashboardLayout>
       </AuthGuard>
     ),
