@@ -1,13 +1,13 @@
 import { Button } from '@/shared/components/ui/button';
-import { Input } from '@/shared/components/ui/input';
 import { 
   Plus, 
-  FileDown, 
   Search,
-  Users
+  Users,
+  Download
 } from 'lucide-react';
 import { usePatientStore } from '@/store/usePatientStore';
 import { exportPatientsToPDF } from '../utils/pdf-export';
+import { PageHeader } from '@/shared/components/PageHeader';
 
 export const PatientsHeader = () => {
   const { searchQuery, setSearchQuery, patients } = usePatientStore();
@@ -17,47 +17,38 @@ export const PatientsHeader = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-      <div>
-        <div className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Users className="h-6 w-6" strokeWidth={1.5} />
+    <PageHeader 
+      title="Pacientes"
+      subtitle="Gestión de Listado y Expedientes Clínicos"
+      icon={Users}
+      actions={
+        <>
+          <div className="relative w-full sm:w-[300px]">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/40" />
+            <input 
+              type="text"
+              placeholder="Buscar paciente..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-border bg-secondary/30 text-[11px] font-bold outline-none focus:border-primary/30 focus:bg-white transition-all shadow-inner"
+            />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Pacientes</h1>
-        </div>
-        <p className="mt-1 text-muted-foreground">
-          Gestiona el listado de pacientes y su información personal.
-        </p>
-      </div>
-
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative w-full sm:w-[300px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary/60" strokeWidth={1.5} />
-          <Input 
-            placeholder="Buscar por nombre o ID..." 
-            className="pl-9 h-11 bg-white/50 border-primary/10 focus:bg-white transition-all shadow-sm"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <Button 
-            variant="outline" 
-            className="h-11 gap-2"
-            onClick={handleExport}
-          >
-            <FileDown className="h-4 w-4" strokeWidth={1.5} />
-            <span className="hidden sm:inline">Exportar PDF</span>
-            <span className="sm:hidden">Exportar</span>
-          </Button>
-          
-          <Button className="h-11 gap-2">
-            <Plus className="h-4 w-4" strokeWidth={1.5} />
-            <span>Crear Nuevo</span>
-          </Button>
-        </div>
-      </div>
-    </div>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              className="h-11 px-5 rounded-xl border-border text-[10px] font-black uppercase tracking-widest gap-2 bg-white hover:bg-secondary"
+              onClick={handleExport}
+            >
+              <Download size={14} className="text-primary" />
+              <span className="hidden sm:inline">Exportar PDF</span>
+            </Button>
+            <Button className="h-11 px-6 rounded-xl bg-primary text-primary-foreground font-black text-[10px] uppercase tracking-widest gap-2 shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all">
+              <Plus size={16} />
+              <span>Nuevo Paciente</span>
+            </Button>
+          </div>
+        </>
+      }
+    />
   );
 };

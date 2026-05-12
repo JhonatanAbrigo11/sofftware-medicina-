@@ -1,4 +1,4 @@
-import type { User, UserRole } from '@/shared/types/auth';
+import type { User } from '@/shared/types/auth';
 
 const MOCK_USERS: Record<string, User & { password: string }> = {
   'admin@medicina.com': {
@@ -61,7 +61,7 @@ export class MockAuthService {
     });
   }
 
-  static async refreshToken(token: string): Promise<string> {
+  static async refreshToken(_token: string): Promise<string> {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(`mock-refreshed-token-${Date.now()}`);

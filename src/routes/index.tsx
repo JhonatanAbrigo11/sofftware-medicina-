@@ -2,21 +2,19 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { LoginPage } from '@/modules/auth/presentation/pages/LoginPage';
 import { DashboardLayout } from '@/shared/layouts/DashboardLayout';
 import { AuthGuard } from '@/shared/components/AuthGuard';
-import { PlaceholderPage } from '@/shared/components/PlaceholderPage';
 import { PatientsPage } from '@/modules/patients/presentation/pages/PatientsPage';
 import { MedicalRecordPage } from '@/modules/patients/presentation/pages/MedicalRecordPage';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Home, 
-  Sparkles, 
-  Scissors, 
-  Package, 
-  CreditCard, 
-  Settings,
-  FileText 
-} from 'lucide-react';
-
+import { AppointmentsPage } from '@/modules/appointments/presentation/pages/AppointmentsPage';
+import { InventoryPage } from '@/modules/inventory/presentation/pages/InventoryPage';
+import { TreatmentsPage } from '@/modules/aesthetic/presentation/pages/TreatmentsPage';
+import { PaymentsPage } from '@/modules/payments/presentation/pages/PaymentsPage';
+import { SurgeriesPage } from '@/modules/surgeries/presentation/pages/SurgeriesPage';
+import { PurchasesPage } from '@/modules/purchases/presentation/pages/PurchasesPage';
+import { NewPurchasePage } from '@/modules/purchases/presentation/pages/NewPurchasePage';
+import { ExpensesPage } from '@/modules/expenses/presentation/pages/ExpensesPage';
+import { DashboardPage } from '@/modules/dashboard/presentation/pages/DashboardPage';
+import { RecoveryHousePage } from '@/modules/recovery/presentation/pages/RecoveryHousePage';
+import { SettingsPage } from '@/modules/settings/presentation/pages/SettingsPage';
 export const router = createBrowserRouter([
   {
     path: '/login',
@@ -37,7 +35,7 @@ export const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <DashboardLayout>
-          <PlaceholderPage title="Dashboard General" icon={LayoutDashboard} />
+          <DashboardPage />
         </DashboardLayout>
       </AuthGuard>
     ),
@@ -63,11 +61,21 @@ export const router = createBrowserRouter([
     ),
   },
   {
+    path: '/appointments',
+    element: (
+      <AuthGuard>
+        <DashboardLayout>
+          <AppointmentsPage />
+        </DashboardLayout>
+      </AuthGuard>
+    ),
+  },
+  {
     path: '/recovery-house',
     element: (
       <AuthGuard>
         <DashboardLayout>
-          <PlaceholderPage title="Casa de Recuperación" icon={Home} />
+          <RecoveryHousePage />
         </DashboardLayout>
       </AuthGuard>
     ),
@@ -77,7 +85,7 @@ export const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <DashboardLayout>
-          <PlaceholderPage title="Medicina Estética" icon={Sparkles} />
+          <TreatmentsPage />
         </DashboardLayout>
       </AuthGuard>
     ),
@@ -87,7 +95,7 @@ export const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <DashboardLayout>
-          <PlaceholderPage title="Programación de Cirugías" icon={Scissors} />
+          <SurgeriesPage />
         </DashboardLayout>
       </AuthGuard>
     ),
@@ -97,7 +105,7 @@ export const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <DashboardLayout>
-          <PlaceholderPage title="Control de Inventario" icon={Package} />
+          <InventoryPage />
         </DashboardLayout>
       </AuthGuard>
     ),
@@ -107,7 +115,37 @@ export const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <DashboardLayout>
-          <PlaceholderPage title="Módulo de Pagos" icon={CreditCard} />
+          <PaymentsPage />
+        </DashboardLayout>
+      </AuthGuard>
+    ),
+  },
+  {
+    path: '/purchases',
+    element: (
+      <AuthGuard>
+        <DashboardLayout>
+          <PurchasesPage />
+        </DashboardLayout>
+      </AuthGuard>
+    ),
+  },
+  {
+    path: '/purchases/new',
+    element: (
+      <AuthGuard>
+        <DashboardLayout>
+          <NewPurchasePage />
+        </DashboardLayout>
+      </AuthGuard>
+    ),
+  },
+  {
+    path: '/expenses',
+    element: (
+      <AuthGuard>
+        <DashboardLayout>
+          <ExpensesPage />
         </DashboardLayout>
       </AuthGuard>
     ),
@@ -117,7 +155,7 @@ export const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <DashboardLayout>
-          <PlaceholderPage title="Configuración del Sistema" icon={Settings} />
+          <SettingsPage />
         </DashboardLayout>
       </AuthGuard>
     ),

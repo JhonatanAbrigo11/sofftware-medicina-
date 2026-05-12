@@ -1,6 +1,5 @@
 import React from 'react';
 import { 
-  Search, 
   Bell, 
   Moon, 
   Sun, 
@@ -20,7 +19,6 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu';
 import { Button } from '@/shared/components/ui/button';
-import { Input } from '@/shared/components/ui/input';
 
 export const Topbar: React.FC = () => {
   const { user, logout } = useAuthStore();
@@ -38,17 +36,7 @@ export const Topbar: React.FC = () => {
   };
 
   return (
-    <header className="h-20 border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-40 px-8 flex items-center justify-between">
-      <div className="flex-1 max-w-xl">
-        <div className="relative group">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-          <Input 
-            placeholder="Buscar pacientes, registros, reportes..." 
-            className="pl-10 bg-muted/50 border-transparent focus-visible:bg-background focus-visible:ring-primary/20 h-11 w-full max-w-md rounded-xl transition-all"
-          />
-        </div>
-      </div>
-
+    <header className="h-20 border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-40 px-8 flex items-center justify-end">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-xl">
           {isDark ? <Sun size={20} /> : <Moon size={20} />}

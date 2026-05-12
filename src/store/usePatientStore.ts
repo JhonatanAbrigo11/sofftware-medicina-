@@ -17,6 +17,9 @@ export type Prescription = {
   medication: string;
   dosage: string;
   instructions: string;
+  frequency?: string;
+  duration?: string;
+  notes?: string;
 };
 
 export type AestheticTreatment = {
@@ -27,17 +30,51 @@ export type AestheticTreatment = {
   status: 'Completado' | 'En Proceso' | 'Programado';
 };
 
+export type AccountReceivable = {
+  id: string;
+  date: string;
+  concept: string;
+  totalAmount: number;
+  paidAmount: number;
+  pendingAmount: number;
+  status: 'Pagado' | 'Parcial' | 'Pendiente';
+};
+
+export type Appointment = {
+  id: string;
+  date: string;
+  time: string;
+  doctor: string;
+  reason: string;
+  status: 'Pendiente' | 'Completada' | 'Cancelada';
+};
+
+export type PatientDocument = {
+  id: string;
+  date: string;
+  name: string;
+  category: string;
+  fileUrl: string;
+  fileSize: string;
+};
+
 interface PatientState {
   patients: Patient[];
   searchQuery: string;
   clinicalHistory: Record<string, ClinicalRecord[]>;
   prescriptions: Record<string, Prescription[]>;
   aestheticTreatments: Record<string, AestheticTreatment[]>;
+  accountsReceivable: Record<string, AccountReceivable[]>;
+  appointments: Record<string, Appointment[]>;
+  documents: Record<string, PatientDocument[]>;
   setSearchQuery: (query: string) => void;
   getFilteredPatients: () => Patient[];
   getClinicalHistory: (patientId: string) => ClinicalRecord[];
   getPrescriptions: (patientId: string) => Prescription[];
   getAestheticTreatments: (patientId: string) => AestheticTreatment[];
+  getAccountsReceivable: (patientId: string) => AccountReceivable[];
+  getAppointments: (patientId: string) => Appointment[];
+  getDocuments: (patientId: string) => PatientDocument[];
 }
 
 const mockPatients: Patient[] = [
@@ -266,13 +303,13 @@ export const usePatientStore = create<PatientState>((set, get) => ({
   getAestheticTreatments: (patientId) => {
     return get().aestheticTreatments[patientId] || [];
   },
-  getAccountsReceivable: (patientId) => {
+  getAccountsReceivable: (patientId: string) => {
     return get().accountsReceivable[patientId] || [];
   },
-  getAppointments: (patientId) => {
+  getAppointments: (patientId: string) => {
     return get().appointments[patientId] || [];
   },
-  getDocuments: (patientId) => {
+  getDocuments: (patientId: string) => {
     return get().documents[patientId] || [];
   }
 }));

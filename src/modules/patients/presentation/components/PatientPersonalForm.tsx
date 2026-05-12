@@ -1,8 +1,6 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
-import { Button } from '@/shared/components/ui/button';
 import type { Patient } from '@/modules/patients/domain/entities/Patient';
 import { 
   User, 
@@ -10,7 +8,6 @@ import {
   Phone, 
   CreditCard, 
   Calendar,
-  Save,
   MapPin
 } from 'lucide-react';
 

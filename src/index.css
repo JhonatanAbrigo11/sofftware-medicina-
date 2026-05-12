@@ -1,69 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Plus+Jakarta+Sans:wght@200..800&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "@fontsource-variable/geist";
 
 :root {
-  --background: #f4f7fa; /* Medical blue-white */
-  --foreground: #1a202c;
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.5 0.15 250); /* Brighter medical blue */
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.45 0.15 250 / 0.5);
-  --radius: 1rem;
+  /* Group V&V Medical Care - Ultra-Refined Minimalist Palette */
+  --background: oklch(99.8% 0.002 240);
+  --foreground: oklch(20% 0.04 250);
+  
+  --card: oklch(100% 0 0);
+  --card-foreground: oklch(20% 0.04 250);
+  
+  --popover: oklch(100% 0 0);
+  --popover-foreground: oklch(20% 0.04 250);
+  
+  /* Primary: Sophisticated Clinical Navy (Trust & Precision) */
+  --primary: oklch(42% 0.14 255);
+  --primary-foreground: oklch(100% 0 0);
+  
+  /* Secondary: Soft Medical Porcelain */
+  --secondary: oklch(97% 0.008 250);
+  --secondary-foreground: oklch(35% 0.05 250);
+  
+  --muted: oklch(96% 0.005 250);
+  --muted-foreground: oklch(50% 0.04 250);
+  
+  /* Accent: Clean Clinical Cyan */
+  --accent: oklch(93% 0.03 220);
+  --accent-foreground: oklch(45% 0.12 240);
+  
+  --success: oklch(65% 0.16 160);
+  --warning: oklch(75% 0.15 75);
+  --destructive: oklch(60% 0.18 25);
+  
+  --border: oklch(93% 0.01 250);
+  --input: oklch(93% 0.01 250);
+  --ring: oklch(42% 0.14 255 / 0.15);
+  
+  /* Standardized Radii for Premium Feel */
+  --radius: 1.25rem;
+  --radius-button: 0.75rem;
 }
 
 .dark {
-  --background: #f4f7fa;
-  --foreground: oklch(0.98 0 0);
-  --card: oklch(0.15 0 0);
-  --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.15 0 0);
-  --popover-foreground: oklch(0.98 0 0);
-  --primary: oklch(0.55 0.18 250);
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.25 0 0);
-  --secondary-foreground: oklch(0.98 0 0);
-  --muted: oklch(0.2 0 0);
-  --muted-foreground: oklch(0.7 0 0);
-  --accent: oklch(0.25 0 0);
-  --accent-foreground: oklch(0.98 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 10%);
-  --ring: oklch(0.55 0.18 250 / 0.5);
+  --background: oklch(12% 0.03 240);
+  --foreground: oklch(98% 0.01 240);
+  
+  --card: oklch(15% 0.03 240);
+  --card-foreground: oklch(98% 0.01 240);
+  
+  --primary: oklch(65% 0.15 235);
+  --primary-foreground: oklch(10% 0.03 240);
+  
+  --secondary: oklch(22% 0.04 240);
+  --secondary-foreground: oklch(90% 0.02 240);
+  
+  --border: oklch(25% 0.04 240);
+  --ring: oklch(65% 0.15 235 / 0.4);
 }
 
 @theme {
-  --font-heading: var(--font-sans);
-  --font-sans: 'Geist Variable', sans-serif;
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+  --font-heading: 'Outfit', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  
+  --radius-sm: calc(var(--radius-button) * 0.8);
+  --radius-md: var(--radius-button);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-xl: calc(var(--radius) * 1.5);
+  --radius-2xl: calc(var(--radius) * 2);
   
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
@@ -72,11 +80,17 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
   --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  
+  --shadow-sm: 0 2px 4px oklch(0 0 0 / 0.02);
+  --shadow-md: 0 4px 12px oklch(0 0 0 / 0.03);
+  --shadow-lg: 0 12px 24px -8px oklch(0 0 0 / 0.05);
+  --shadow-xl: 0 20px 40px -12px oklch(0 0 0 / 0.08);
 }
 
 @layer base {
@@ -85,8 +99,14 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
     margin: 0;
+    background-image: 
+      radial-gradient(at 0% 0%, oklch(94% 0.03 220 / 0.1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, oklch(90% 0.04 220 / 0.05) 0px, transparent 50%);
+    background-attachment: fixed;
+    min-height: 100vh;
   }
   html {
     @apply font-sans;

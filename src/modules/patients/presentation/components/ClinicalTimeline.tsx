@@ -38,14 +38,14 @@ export const ClinicalTimeline: React.FC<ClinicalTimelineProps> = ({ records }) =
   };
 
   return (
-    <div className="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-primary/20 before:via-primary/10 before:to-transparent">
+    <div className="relative space-y-12 before:absolute before:inset-0 before:ml-[1.25rem] before:-translate-x-px before:h-full before:w-1 before:bg-gradient-to-b before:from-primary/40 before:via-primary/20 before:to-transparent">
       {records.length > 0 ? (
-        records.map((record, index) => (
-          <div key={record.id} className="relative flex items-start gap-6 group">
+        records.map((record) => (
+          <div key={record.id} className="relative flex items-start gap-8 group">
             {/* Dot & Icon */}
-            <div className="absolute left-0 mt-1 flex h-10 w-10 items-center justify-center rounded-full border-4 border-white bg-white shadow-md transition-all group-hover:scale-110 group-hover:shadow-lg z-10">
+            <div className="absolute left-0 mt-1 flex h-10 w-10 items-center justify-center rounded-xl border-4 border-white bg-white shadow-xl shadow-primary/5 transition-all duration-500 group-hover:scale-110 group-hover:rotate-12 z-10">
               <div className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-full text-white shadow-inner",
+                "flex h-7 w-7 items-center justify-center rounded-xl text-white shadow-inner",
                 record.type === 'Consulta' ? 'bg-blue-500' :
                 record.type === 'Cirugía' ? 'bg-purple-500' :
                 record.type === 'Seguimiento' ? 'bg-emerald-500' :
@@ -56,47 +56,60 @@ export const ClinicalTimeline: React.FC<ClinicalTimelineProps> = ({ records }) =
             </div>
 
             {/* Content Card */}
-            <div className="ml-14 flex-1 rounded-2xl border bg-white/50 p-6 shadow-sm backdrop-blur-sm transition-all hover:shadow-md hover:bg-white hover:border-primary/20">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Badge variant="outline" className={cn("px-2 py-0 text-[10px] uppercase font-bold tracking-wider", getTypeColor(record.type))}>
+            <div className="ml-16 flex-1 rounded-xl border border-white bg-white/40 p-8 shadow-xl shadow-primary/5 backdrop-blur-md transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:bg-white/80 hover:scale-[1.01] group/card">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-6">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Badge className={cn("px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.1em]", getTypeColor(record.type))}>
                       {record.type}
                     </Badge>
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+                    <span className="text-xs font-bold text-muted-foreground flex items-center gap-1.5 uppercase tracking-widest">
                       <Clock className="h-3 w-3" />
                       {record.time}
                     </span>
                   </div>
-                  <h4 className="text-lg font-bold text-foreground">{record.title}</h4>
+                  <h4 className="text-2xl font-black text-foreground leading-tight group-hover/card:text-primary transition-colors duration-300">
+                    {record.title}
+                  </h4>
                 </div>
-                <div className="flex items-center gap-2 text-sm font-medium text-primary bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10">
-                  <User className="h-4 w-4" strokeWidth={1.5} />
-                  {record.doctor}
+                
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-secondary/30 border border-white/50 backdrop-blur-sm">
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                    <User className="h-4 w-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase">Atendido por</span>
+                    <span className="text-sm font-black text-primary/80">{record.doctor}</span>
+                  </div>
                 </div>
               </div>
 
-              <div className="relative">
-                <p className="text-sm text-muted-foreground leading-relaxed pl-4 border-l-2 border-primary/10 italic">
+              <div className="relative overflow-hidden p-6 rounded-xl bg-white shadow-inner border border-primary/5">
+                <div className="absolute top-0 left-0 h-full w-1.5 bg-primary/20" />
+                <p className="text-sm font-medium text-muted-foreground leading-relaxed italic pl-2">
                   "{record.summary}"
                 </p>
               </div>
 
-              <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground border-t pt-4">
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="h-3.5 w-3.5 text-primary/60" />
+              <div className="mt-8 flex items-center justify-between border-t border-primary/5 pt-6">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/5 text-primary text-xs font-bold">
+                  <Calendar className="h-3.5 w-3.5" />
                   {record.date}
-                </span>
-                <button className="ml-auto text-primary font-semibold hover:underline flex items-center gap-1">
+                </div>
+                
+                <button className="group/btn flex items-center gap-2 text-sm font-black text-primary hover:text-primary/70 transition-all">
                   Ver detalles completos
-                  <ChevronRight className="h-3 w-3" />
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 group-hover/btn:translate-x-1 transition-transform duration-300">
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </div>
                 </button>
               </div>
             </div>
           </div>
         ))
       ) : (
-        <div className="text-center py-12 text-muted-foreground italic bg-slate-50 rounded-2xl border border-dashed">
+        <div className="text-center py-20 text-muted-foreground font-bold italic bg-secondary/20 rounded-xl border-2 border-dashed border-primary/10">
           No hay registros clínicos disponibles para este paciente.
         </div>
       )}

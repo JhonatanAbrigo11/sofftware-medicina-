@@ -9,4 +9,5 @@ export type Patient = {
   lastVisit: string;
   status: 'Activo' | 'Inactivo' | 'En Seguimiento';
   documentId: string; // ID Card / DNI
+  age?: number;
 }
