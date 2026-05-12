@@ -12,8 +12,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Stethoscope,
-  CalendarDays as CalendarDaysIcon
+  CalendarDays as CalendarDaysIcon,
+  MessageSquare,
+  ExternalLink,
+  Send
 } from 'lucide-react';
+import { Textarea } from '@/shared/components/ui/textarea';
 import { Button } from '@/shared/components/ui/button';
 import { Badge } from '@/shared/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
@@ -79,6 +83,9 @@ export const AppointmentsPage = () => {
   const [currentDate, setCurrentDate] = useState(new Date(2024, 5, 10)); // June 10, 2024
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<{ time: string, doctor: string } | null>(null);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [selectedAptForContact, setSelectedAptForContact] = useState<Appointment | null>(null);
+  const [contactMessage, setContactMessage] = useState('');
   
   // Form State
   const [newApt, setNewApt] = useState({
@@ -121,6 +128,25 @@ export const AppointmentsPage = () => {
     setAppointments([...appointments, appointment]);
     setIsModalOpen(false);
     setNewApt({ patientName: '', type: '', status: 'Pendiente', mode: 'Presencial' });
+  };
+
+  const handleOpenContactModal = (apt: Appointment) => {
+    setSelectedAptForContact(apt);
+    const baseUrl = window.location.origin;
+    const confirmUrl = `${baseUrl}/confirm-appointment/${apt.id}`;
+    
+    const message = `*HOLA ${apt.patientName.toUpperCase()}*\n\nTe saludamos de *GROUP V&V MEDICAL*\n\nConfirmamos tu cita para:\n\n*PROCEDIMIENTO:* ${apt.type}\n*ESPECIALISTA:* ${apt.doctor}\n*FECHA:* ${apt.date}\n*HORA:* ${apt.time}\n\n*UBICACIÓN:* Av. Interoceánica y Calle L\n\nPor favor, confirma tu asistencia dando clic en el siguiente enlace:\n${confirmUrl}`;
+    
+    setContactMessage(message);
+    setIsContactModalOpen(true);
+  };
+
+  const handleSendWhatsApp = () => {
+    if (!contactMessage) return;
+    const phone = '593968982380'; // Specified by user
+    const encodedMessage = encodeURIComponent(contactMessage);
+    window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+    setIsContactModalOpen(false);
   };
 
   const filteredAppointments = appointments.filter(a => a.date === isoDate);
@@ -171,15 +197,87 @@ export const AppointmentsPage = () => {
         }
       />
 
-      <Tabs defaultValue="calendar" className="w-full">
+      <Tabs defaultValue="list" className="w-full">
         <TabsList className="bg-secondary p-1 h-12 rounded-2xl border border-border mb-8 gap-1 w-full sm:w-auto overflow-x-auto scrollbar-none">
-          <TabsTrigger value="calendar" className="flex-1 sm:flex-none rounded-xl px-10 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all whitespace-nowrap">
-            <CalendarDaysIcon size={14} className="mr-2" /> Agenda por Doctor
-          </TabsTrigger>
           <TabsTrigger value="list" className="flex-1 sm:flex-none rounded-xl px-10 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all whitespace-nowrap">
             <List size={14} className="mr-2" /> Flujo de Pacientes
           </TabsTrigger>
+          <TabsTrigger value="calendar" className="flex-1 sm:flex-none rounded-xl px-10 h-full font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all whitespace-nowrap">
+            <CalendarDaysIcon size={14} className="mr-2" /> Agenda por Doctor
+          </TabsTrigger>
         </TabsList>
+
+        {/* List View Content */}
+        <TabsContent value="list" className="mt-0 outline-none">
+          <div className="space-y-4">
+            {filteredAppointments.length > 0 ? (
+              <div className="grid grid-cols-1 gap-4">
+                {filteredAppointments.map((apt, idx) => (
+                  <motion.div
+                    key={apt.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="group p-6 rounded-[2.5rem] bg-white border border-border shadow-sm hover:border-primary/20 transition-all duration-300 flex flex-col md:flex-row items-start md:items-center gap-8"
+                  >
+                    <div className="flex flex-col items-center justify-center h-16 w-16 shrink-0 rounded-2xl bg-secondary/30 border border-border shadow-inner">
+                      <span className="text-xs font-black text-foreground">{apt.time.split(' ')[0]}</span>
+                      <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">{apt.time.split(' ')[1]}</span>
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-4 mb-2">
+                        <h4 className="text-lg font-black text-foreground tracking-tight truncate uppercase">{apt.patientName}</h4>
+                        <Badge className={cn(
+                          "px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-[0.2em]",
+                          apt.status === 'Confirmada' ? 'bg-success/10 text-success border-success/20' : 'bg-warning/10 text-warning border-warning/20'
+                        )}>
+                          {apt.status}
+                        </Badge>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-x-8 gap-y-2 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                        <span className="flex items-center gap-2">
+                          <User size={14} className="text-primary/40" />
+                          Doctor: <span className="text-foreground">{apt.doctor}</span>
+                        </span>
+                        <span className="flex items-center gap-2">
+                          <Sparkles size={14} className="text-primary/40" />
+                          {apt.type}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 w-full md:w-auto pt-4 md:pt-0 border-t md:border-0 border-border/50">
+                      <select 
+                        onChange={(e) => {
+                          if (e.target.value === 'contact') {
+                            handleOpenContactModal(apt);
+                          }
+                        }}
+                        className="bg-secondary/30 border border-border rounded-xl px-5 py-2.5 text-[10px] font-black text-foreground outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none min-w-[200px] uppercase tracking-widest"
+                      >
+                        <option value="scheduled">Cita Programada</option>
+                        <option value="contact">Contactar</option>
+                        <option value="waiting">En sala de espera</option>
+                        <option value="consulting">En consultorio</option>
+                        <option value="no-show">No asistió</option>
+                      </select>
+                      <Button variant="ghost" size="icon" className="h-11 w-11 rounded-xl hover:bg-secondary">
+                        <MoreVertical size={18} className="text-muted-foreground" />
+                      </Button>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="py-20 text-center bg-white border border-dashed border-border rounded-[3rem]">
+                <CalendarIcon className="h-12 w-12 text-muted-foreground/20 mx-auto mb-6" />
+                <h3 className="text-lg font-black text-foreground mb-2 uppercase tracking-tight">Sin citas agendadas</h3>
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">No hay registros para este día en particular.</p>
+              </div>
+            )}
+          </div>
+        </TabsContent>
 
         {/* Calendar Content */}
         <TabsContent value="calendar" className="mt-0 outline-none">
@@ -238,7 +336,17 @@ export const AppointmentsPage = () => {
                                   apt.mode === 'Telemedicina' ? 'bg-indigo-100 text-indigo-600' : 'bg-blue-100 text-blue-600'
                                 )}>{apt.mode}</Badge>
                               </div>
-                              <h5 className="text-[11px] font-black leading-tight uppercase tracking-tight">{apt.patientName}</h5>
+                              <div className="flex items-center justify-between group/apt">
+                                <h5 className="text-[11px] font-black leading-tight uppercase tracking-tight">{apt.patientName}</h5>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-6 w-6 opacity-0 group-hover/apt:opacity-100 transition-opacity"
+                                  onClick={(e) => { e.stopPropagation(); handleOpenContactModal(apt); }}
+                                >
+                                  <MessageSquare size={12} className="text-primary" />
+                                </Button>
+                              </div>
                             </div>
                             <div className="pt-2 border-t border-border/50">
                               <p className="text-[10px] font-bold text-muted-foreground truncate flex items-center gap-1.5 uppercase tracking-wide">
@@ -261,71 +369,6 @@ export const AppointmentsPage = () => {
                 </div>
               ))}
             </div>
-          </div>
-        </TabsContent>
-
-        {/* List View Content */}
-        <TabsContent value="list" className="mt-0 outline-none">
-          <div className="space-y-4">
-            {filteredAppointments.length > 0 ? (
-              <div className="grid grid-cols-1 gap-4">
-                {filteredAppointments.map((apt, idx) => (
-                  <motion.div
-                    key={apt.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                    className="group p-6 rounded-[2.5rem] bg-white border border-border shadow-sm hover:border-primary/20 transition-all duration-300 flex flex-col md:flex-row items-start md:items-center gap-8"
-                  >
-                    <div className="flex flex-col items-center justify-center h-16 w-16 shrink-0 rounded-2xl bg-secondary/30 border border-border shadow-inner">
-                      <span className="text-xs font-black text-foreground">{apt.time.split(' ')[0]}</span>
-                      <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">{apt.time.split(' ')[1]}</span>
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-4 mb-2">
-                        <h4 className="text-lg font-black text-foreground tracking-tight truncate uppercase">{apt.patientName}</h4>
-                        <Badge className={cn(
-                          "px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-[0.2em]",
-                          apt.status === 'Confirmada' ? 'bg-success/10 text-success border-success/20' : 'bg-warning/10 text-warning border-warning/20'
-                        )}>
-                          {apt.status}
-                        </Badge>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-x-8 gap-y-2 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                        <span className="flex items-center gap-2">
-                          <User size={14} className="text-primary/40" />
-                          Doctor: <span className="text-foreground">{apt.doctor}</span>
-                        </span>
-                        <span className="flex items-center gap-2">
-                          <Sparkles size={14} className="text-primary/40" />
-                          {apt.type}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 w-full md:w-auto pt-4 md:pt-0 border-t md:border-0 border-border/50">
-                      <select className="bg-secondary/30 border border-border rounded-xl px-5 py-2.5 text-[10px] font-black text-foreground outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none min-w-[200px] uppercase tracking-widest">
-                        <option value="scheduled">Cita Programada</option>
-                        <option value="contact">Contactar</option>
-                        <option value="waiting">En sala de espera</option>
-                        <option value="consulting">En consultorio</option>
-                        <option value="no-show">No asistió</option>
-                      </select>
-                      <Button variant="ghost" size="icon" className="h-11 w-11 rounded-xl hover:bg-secondary">
-                        <MoreVertical size={18} className="text-muted-foreground" />
-                      </Button>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            ) : (
-              <div className="py-20 text-center bg-white border border-dashed border-border rounded-[3rem]">
-                <CalendarIcon className="h-12 w-12 text-muted-foreground/20 mx-auto mb-6" />
-                <h3 className="text-lg font-black text-foreground mb-2 uppercase tracking-tight">Sin citas agendadas</h3>
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">No hay registros para este día en particular.</p>
-              </div>
-            )}
           </div>
         </TabsContent>
       </Tabs>
@@ -417,6 +460,91 @@ export const AppointmentsPage = () => {
                 className="flex-1 h-12 rounded-xl bg-primary text-primary-foreground shadow-2xl shadow-primary/20 font-black text-[10px] uppercase tracking-widest hover:bg-primary/90 transition-all"
               >
                 Programar Cita
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Contact Modal */}
+      <Dialog open={isContactModalOpen} onOpenChange={setIsContactModalOpen}>
+        <DialogContent className="max-w-4xl w-[95vw] rounded-[3rem] p-0 border-none shadow-2xl overflow-hidden bg-white">
+          <div className="flex flex-col h-full">
+            <div className="p-8 border-b border-border bg-secondary/30 flex items-center gap-6">
+              <div className="h-12 w-12 rounded-xl bg-primary text-white flex items-center justify-center shadow-xl shadow-primary/20">
+                <MessageSquare size={20} />
+              </div>
+              <div>
+                <h2 className="text-xl font-heading font-black text-foreground tracking-tight uppercase">Confirmación WhatsApp</h2>
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-1">Gestión de mensaje de confirmación</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row">
+              {/* Left Column: Context */}
+              <div className="md:w-1/3 p-10 bg-secondary/10 border-r border-border space-y-8">
+                <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-6">Detalles de Cita</h3>
+                
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm"><User size={18} /></div>
+                    <div>
+                      <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Paciente</p>
+                      <p className="text-sm font-black text-foreground uppercase">{selectedAptForContact?.patientName}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm"><Stethoscope size={18} /></div>
+                    <div>
+                      <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Procedimiento</p>
+                      <p className="text-xs font-black text-foreground uppercase truncate max-w-[150px]">{selectedAptForContact?.type}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm"><Clock size={18} /></div>
+                    <div>
+                      <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Horario</p>
+                      <p className="text-xs font-black text-foreground uppercase">{selectedAptForContact?.time} — {selectedAptForContact?.date}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-8 border-t border-border/50">
+                  <div className="p-5 rounded-2xl bg-white border border-border/50 flex items-center gap-4">
+                    <ExternalLink size={18} className="text-primary shrink-0" />
+                    <p className="text-[9px] font-bold text-muted-foreground uppercase leading-tight tracking-tight">
+                      El link de confirmación se generará automáticamente al final del mensaje.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Editor */}
+              <div className="md:w-2/3 p-10 space-y-6">
+                <div className="space-y-3">
+                  <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Editar Mensaje Personalizado</Label>
+                  <Textarea 
+                    value={contactMessage}
+                    onChange={(e) => setContactMessage(e.target.value)}
+                    className="min-h-[250px] rounded-[2rem] border-border bg-secondary/20 focus:bg-white transition-all text-sm font-bold leading-relaxed resize-none p-8"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="p-8 border-t border-border bg-secondary/20 flex justify-end gap-4">
+              <Button 
+                variant="ghost" 
+                onClick={() => setIsContactModalOpen(false)}
+                className="px-10 h-12 rounded-xl text-[10px] font-black uppercase tracking-widest text-muted-foreground"
+              >
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleSendWhatsApp}
+                className="px-12 h-14 rounded-xl bg-[#25D366] text-white shadow-2xl shadow-green-500/20 font-black text-[10px] uppercase tracking-widest hover:bg-[#20ba59] transition-all flex items-center justify-center gap-3"
+              >
+                <Send size={16} /> Enviar WhatsApp
               </Button>
             </div>
           </div>

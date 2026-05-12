@@ -15,10 +15,15 @@ import { ExpensesPage } from '@/modules/expenses/presentation/pages/ExpensesPage
 import { DashboardPage } from '@/modules/dashboard/presentation/pages/DashboardPage';
 import { RecoveryHousePage } from '@/modules/recovery/presentation/pages/RecoveryHousePage';
 import { SettingsPage } from '@/modules/settings/presentation/pages/SettingsPage';
+import { AppointmentConfirmationPage } from '@/modules/appointments/presentation/pages/AppointmentConfirmationPage';
 export const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />,
+  },
+  {
+    path: '/confirm-appointment/:id',
+    element: <AppointmentConfirmationPage />,
   },
   {
     path: '/',
