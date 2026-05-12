@@ -48,8 +48,73 @@ interface RecoveryPatient {
 }
 
 const initialPatients: RecoveryPatient[] = [
-  { id: 'P1', name: 'Elena Gomez', bed: 'Habitación 101-A', procedure: 'Rinoplastia Ultrasónica', entryDate: '2024-05-10', daysStayed: 2, status: 'Activo', expenses: [{ id: 'e1', type: 'Comida', description: 'Almuerzo Dieta Blanda', amount: 15.00, date: '2024-05-11' }, { id: 'e2', type: 'Medicina', description: 'Analgésicos Post-Op', amount: 45.00, date: '2024-05-11' }] },
-  { id: 'P2', name: 'Carlos Mendez', bed: 'Habitación 104-B', procedure: 'Lipoescultura HD', entryDate: '2024-05-08', daysStayed: 4, status: 'Activo', expenses: [{ id: 'e3', type: 'Lavandería', description: 'Lavado de Faja Médica', amount: 12.00, date: '2024-05-09' }, { id: 'e4', type: 'Comida', description: 'Cena Especial', amount: 18.00, date: '2024-05-10' }] }
+  { 
+    id: 'P1', 
+    name: 'Elena Gomez', 
+    bed: 'Habitación 101-A', 
+    procedure: 'Rinoplastia Ultrasónica', 
+    entryDate: '2024-05-10', 
+    daysStayed: 2, 
+    status: 'Activo', 
+    expenses: [
+      { id: 'e1', type: 'Comida', description: 'Almuerzo Dieta Blanda', amount: 15.00, date: '2024-05-11' }, 
+      { id: 'e2', type: 'Medicina', description: 'Analgésicos Post-Op', amount: 45.00, date: '2024-05-11' }
+    ] 
+  },
+  { 
+    id: 'P2', 
+    name: 'Carlos Mendez', 
+    bed: 'Habitación 104-B', 
+    procedure: 'Lipoescultura HD', 
+    entryDate: '2024-05-08', 
+    daysStayed: 4, 
+    status: 'Activo', 
+    expenses: [
+      { id: 'e3', type: 'Lavandería', description: 'Lavado de Faja Médica', amount: 12.00, date: '2024-05-09' }, 
+      { id: 'e4', type: 'Comida', description: 'Cena Especial', amount: 18.00, date: '2024-05-10' }
+    ] 
+  },
+  {
+    id: 'P3',
+    name: 'Isabella Martínez',
+    bed: 'Suite 201',
+    procedure: 'Mamoplastia de Aumento',
+    entryDate: '2024-04-15',
+    exitDate: '2024-04-18',
+    daysStayed: 3,
+    status: 'Finalizado',
+    expenses: [
+      { id: 'e5', type: 'Comida', description: 'Pensión Completa (3 días)', amount: 150.00, date: '2024-04-16' },
+      { id: 'e6', type: 'Aseo', description: 'Kit de Aseo Premium', amount: 35.00, date: '2024-04-15' }
+    ]
+  },
+  {
+    id: 'P4',
+    name: 'Juan Rodríguez',
+    bed: 'Habitación 102',
+    procedure: 'Abdominoplastia',
+    entryDate: '2024-04-20',
+    exitDate: '2024-04-27',
+    daysStayed: 7,
+    status: 'Finalizado',
+    expenses: [
+      { id: 'e7', type: 'Medicina', description: 'Paquete de Curación', amount: 85.00, date: '2024-04-21' },
+      { id: 'e8', type: 'Lavandería', description: 'Limpieza de Sábanas Diaria', amount: 42.00, date: '2024-04-23' }
+    ]
+  },
+  {
+    id: 'P5',
+    name: 'Lucía Fernández',
+    bed: 'Habitación 106-B',
+    procedure: 'Blefaroplastia',
+    entryDate: '2024-05-01',
+    exitDate: '2024-05-03',
+    daysStayed: 2,
+    status: 'Finalizado',
+    expenses: [
+      { id: 'e9', type: 'Comida', description: 'Dieta Blanda Especial', amount: 30.00, date: '2024-05-02' }
+    ]
+  }
 ];
 
 const AVAILABLE_ROOMS = ['Habitación 102', 'Habitación 103', 'Habitación 105', 'Habitación 106-A', 'Habitación 106-B', 'Suite 201'];
@@ -61,6 +126,7 @@ export const RecoveryHousePage = () => {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('active');
+  const [historySearch, setHistorySearch] = useState('');
 
   const [newEntry, setNewEntry] = useState({ name: '', bed: AVAILABLE_ROOMS[0], procedure: '', entryDate: new Date().toISOString().split('T')[0] });
 
@@ -85,7 +151,11 @@ export const RecoveryHousePage = () => {
   };
 
   const activePatients = patients.filter(p => p.status === 'Activo');
-  const historyPatients = patients.filter(p => p.status === 'Finalizado');
+  const historyPatients = patients.filter(p => 
+    p.status === 'Finalizado' && 
+    (p.name.toLowerCase().includes(historySearch.toLowerCase()) || 
+     p.procedure.toLowerCase().includes(historySearch.toLowerCase()))
+  );
 
   return (
     <div className="flex flex-col gap-8 pb-20 animate-in fade-in duration-500 font-sans">
@@ -158,34 +228,51 @@ export const RecoveryHousePage = () => {
               <h3 className="text-sm font-black text-foreground uppercase tracking-widest flex items-center gap-3"><ClipboardList size={20} className="text-primary" /> Archivo de Estancias</h3>
               <div className="relative w-full md:w-80">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
-                <input type="text" placeholder="Buscar paciente..." className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-border bg-white text-[11px] font-bold outline-none focus:border-primary/30 transition-all shadow-inner" />
+                <input 
+                  type="text" 
+                  placeholder="Buscar paciente o procedimiento..." 
+                  value={historySearch}
+                  onChange={(e) => setHistorySearch(e.target.value)}
+                  className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-border bg-white text-[11px] font-bold outline-none focus:border-primary/30 transition-all shadow-inner" 
+                />
               </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left min-w-[800px]">
                 <thead><tr className="bg-secondary/30"><th className="px-10 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.25em]">Paciente</th><th className="px-10 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.25em]">Procedimiento</th><th className="px-10 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.25em]">Periodo</th><th className="px-10 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.25em] text-right">Total</th><th className="px-10 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-[0.25em] text-right">Acción</th></tr></thead>
                 <tbody className="divide-y divide-border/50">
-                  {historyPatients.map((patient) => (
-                    <tr key={patient.id} className="group hover:bg-secondary/20 transition-colors">
-                      <td className="px-10 py-8">
-                        <div className="flex items-center gap-4">
-                          <div className="h-10 w-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground group-hover:bg-accent group-hover:text-primary transition-all shadow-sm"><User size={18} /></div>
-                          <div><p className="text-sm font-black text-foreground">{patient.name}</p><p className="text-[10px] text-muted-foreground font-bold uppercase tracking-tight">{patient.bed}</p></div>
+                  {historyPatients.length > 0 ? (
+                    historyPatients.map((patient) => (
+                      <tr key={patient.id} className="group hover:bg-secondary/20 transition-colors">
+                        <td className="px-10 py-8">
+                          <div className="flex items-center gap-4">
+                            <div className="h-10 w-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground group-hover:bg-accent group-hover:text-primary transition-all shadow-sm"><User size={18} /></div>
+                            <div><p className="text-sm font-black text-foreground">{patient.name}</p><p className="text-[10px] text-muted-foreground font-bold uppercase tracking-tight">{patient.bed}</p></div>
+                          </div>
+                        </td>
+                        <td className="px-10 py-8"><p className="text-[11px] font-black text-foreground uppercase tracking-tight">{patient.procedure}</p></td>
+                        <td className="px-10 py-8">
+                          <div className="flex flex-col gap-1.5">
+                            <p className="text-[10px] font-black text-foreground flex items-center gap-2"><Calendar size={14} className="text-success" /> {patient.entryDate} <ArrowRight size={10} className="text-muted-foreground" /> {patient.exitDate}</p>
+                            <p className="text-[9px] text-muted-foreground font-black uppercase tracking-[0.2em]">{patient.daysStayed} Días</p>
+                          </div>
+                        </td>
+                        <td className="px-10 py-8 text-right"><p className="text-sm font-black text-foreground tracking-tighter">${patient.expenses.reduce((acc, curr) => acc + curr.amount, 0).toFixed(2)}</p></td>
+                        <td className="px-10 py-8 text-right">
+                          <Button onClick={() => { setSelectedPatient(patient); setIsDetailModalOpen(true); }} variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-muted-foreground hover:text-primary hover:bg-accent transition-all"><EyeIcon size={18} /></Button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} className="px-10 py-20 text-center">
+                        <div className="flex flex-col items-center gap-4 opacity-20">
+                          <Search size={48} />
+                          <p className="text-xs font-black uppercase tracking-[0.3em]">No se encontraron estancias</p>
                         </div>
-                      </td>
-                      <td className="px-10 py-8"><p className="text-[11px] font-black text-foreground uppercase tracking-tight">{patient.procedure}</p></td>
-                      <td className="px-10 py-8">
-                        <div className="flex flex-col gap-1.5">
-                          <p className="text-[10px] font-black text-foreground flex items-center gap-2"><Calendar size={14} className="text-success" /> {patient.entryDate} <ArrowRight size={10} className="text-muted-foreground" /> {patient.exitDate}</p>
-                          <p className="text-[9px] text-muted-foreground font-black uppercase tracking-[0.2em]">{patient.daysStayed} Días</p>
-                        </div>
-                      </td>
-                      <td className="px-10 py-8 text-right"><p className="text-sm font-black text-foreground tracking-tighter">${patient.expenses.reduce((acc, curr) => acc + curr.amount, 0).toFixed(2)}</p></td>
-                      <td className="px-10 py-8 text-right">
-                        <Button onClick={() => { setSelectedPatient(patient); setIsDetailModalOpen(true); }} variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-muted-foreground hover:text-primary hover:bg-accent transition-all"><EyeIcon size={18} /></Button>
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>
